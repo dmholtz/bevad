@@ -426,8 +426,11 @@ BevAD achieves 72.7% success rate on the Bench2Drive benchmark and demonstrates 
     
     if (viewerContainer) {
       try {
+        // Construct the absolute URL for the RRD file
+        const rrdUrl = new URL('./static/rrd/demo.rrd', window.location.href).href;
+        
         const viewer = new WebViewer();
-        await viewer.start(null, viewerContainer, {
+        await viewer.start(rrdUrl, viewerContainer, {
           width: '100%',
           height: '100%',
           allow_fullscreen: true
