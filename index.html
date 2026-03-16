@@ -348,23 +348,21 @@ BevAD achieves 72.7% success rate on the Bench2Drive benchmark and demonstrates 
     <div class="container">
       <div id="results-carousel" class="carousel results-carousel">
        <div class="item">
-        <img src="static/media/analysis-framework.png" alt="First research result visualization" loading="lazy"/>
+        <img src="static/media/analysis-framework.png" alt="Analysis Framework" loading="lazy"/>
         <h2 class="subtitle has-text-centered">
           <strong>Analysis Framework:</strong> Our analysis framework builds upon ParaDrive. (1) We introduce a scene tokenizer to reduce the spatial resolution of the BEV features. (2) The planning head is a transformer decoder, modelling the planning task either by point estimation or by diffusion. The interpretation of the planning queries determines the planner's output representation, which can be a entangled trajectory representation or a disentangled path + velocity representation.
         </h2>
       </div>
       <div class="item">
-        <!-- Your image here -->
-        <img src="static/images/carousel2.jpg" alt="Second research result visualization" loading="lazy"/>
+        <img src="static/media/attention.png" alt="Visualization of Attention" loading="lazy"/>
         <h2 class="subtitle has-text-centered">
-          Second image description.
+          <strong>High-Resolution Perceptual Representations Facilitate Overfitting:</strong> Our scene tokenizer effectively compresses spatial information and improves robustness in closed-loop driving. Qualitative visualization of the planning queries cross-attention to BEV features confirm: (a) The planner attends to distant BEV cells. Despite strong attention on the traffic light, the autonomous vehicle runs the red light. (b) There are numerous attention spikes to random BEV cells, but barely no attention to the oncoming traffic. (c) The attention map significantly simplifies and exhibits fewer attention outliers.
         </h2>
       </div>
       <div class="item">
-        <!-- Your image here -->
-        <img src="static/images/carousel3.jpg" alt="Third research result visualization" loading="lazy"/>
+        <img src="static/media/modeling-representation.png" alt="Modeling Representation" loading="lazy"/>
         <h2 class="subtitle has-text-centered">
-         Third image description.
+         <strong>Comparison of modeling and planning representation:</strong> Diffusion-based planners (DI) and disentangled representations (P+S) provide complementary benefits. We find that the disentanglement is favorable for robust steering, while diffusion is beneficial for reducing dynamic infractions.
        </h2>
      </div>
      <div class="item">
