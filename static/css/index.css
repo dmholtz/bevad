@@ -268,6 +268,7 @@ body {
   box-shadow: var(--shadow-md);
   transition: var(--transition);
   border: 1px solid var(--border-color);
+  height: 750px;
 }
 
 .results-carousel .item:hover {
@@ -280,7 +281,8 @@ body {
   margin: 0;
   border-radius: var(--border-radius);
   width: 100%;
-  height: auto;
+  height: 600px;
+  object-fit: contain;
 }
 
 .results-carousel .subtitle {
