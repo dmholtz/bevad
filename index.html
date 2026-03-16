@@ -345,14 +345,12 @@ BevAD achieves 72.7% success rate on the Bench2Drive benchmark and demonstrates 
 <!-- Image carousel -->
 <section class="hero is-small">
   <div class="hero-body">
-    <div class="container">
+    <div class="container" max-height="500px">
       <div id="results-carousel" class="carousel results-carousel">
        <div class="item">
-        <!-- TODO: Replace with your research result images -->
-        <img src="static/images/carousel1.jpg" alt="First research result visualization" loading="lazy"/>
-        <!-- TODO: Replace with description of this result -->
-        <h2 class="le has-text-centered">
-          First image description.
+        <img src="static/media/analysis-framework.png" alt="First research result visualization" loading="lazy"/>
+        <h2 class="subtitle has-text-centered">
+          <strong>Analysis Framework:</strong> Our analysis framework builds upon ParaDrive. (1) We introduce a scene tokenizer to reduce the spatial resolution of the BEV features. (2) The planning head is a transformer decoder, modelling the planning task either as a point estimation or a generative task by diffusion. The interpretation of the planning queries determines the planner's output representation, which can be a entangled trajectory representation or a disentangled path + velocity representation.
         </h2>
       </div>
       <div class="item">
@@ -370,10 +368,9 @@ BevAD achieves 72.7% success rate on the Bench2Drive benchmark and demonstrates 
        </h2>
      </div>
      <div class="item">
-      <!-- Your image here -->
-      <img src="static/images/carousel4.jpg" alt="Fourth research result visualization" loading="lazy"/>
+      <img src="static/media/scaling.png" alt="Scaling Properties" loading="lazy"/>
       <h2 class="subtitle has-text-centered">
-        Fourth image description.
+        <strong>Diminishing Returns when Scaling Non-Generative Planners:</strong> Diffusion demonstrates superior performance over point estimators when scaled with sufficient training data, despite initially underperforming with limited data.
       </h2>
     </div>
   </div>
