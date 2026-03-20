@@ -415,12 +415,10 @@ BevAD achieves 72.7% success rate on the Bench2Drive benchmark and demonstrates 
     const viewerContainer = document.getElementById('rerun-viewer-container');
     let viewer;
     let currentRrdUrl;
-    
+    const blueprintUrl = new URL('./static/rbl/demo-blueprint.rbl', window.location.href).href;
+
     if (viewerContainer) {
       try {
-        // blueprint URL
-        const blueprintUrl = new URL('./static/rbl/demo-blueprint.rbl', window.location.href).href;
-
         // Construct the absolute URL for the default RRD file
         currentRrdUrl = new URL('./static/rrd/demo-yield-pedestrian.rrd', window.location.href).href;
         
@@ -450,7 +448,7 @@ BevAD achieves 72.7% success rate on the Bench2Drive benchmark and demonstrates 
         
         // Open new recording
         currentRrdUrl = new URL('./static/rrd/' + rrdFile, window.location.href).href;
-        viewer.open(currentRrdUrl);
+        viewer.open([blueprintUrl, currentRrdUrl]);
       } catch (error) {
         console.error('Failed to switch recording:', error);
       }
