@@ -383,12 +383,25 @@ BevAD achieves 72.7% success rate on the Bench2Drive benchmark and demonstrates 
     <div class="container">
       <h2 class="title is-3">Interactive Viewer</h2>
       <p class="has-text-centered mb-4">
-        Experience BevAD's closed-loop driving performance through our interactive 3D viewer. Here, we visualize 3D object detections alongside the vehicle's planned path and trajectory.
+        Experience BevAD's closed-loop driving performance through our interactive 3D viewer. Here, we visualize 3D object detections alongside the vehicle's planned path (cyan) and trajectory rollout (magenta).
+        <it>Note: While BevAD leverages a six camera setup for 360-degree perception, the viewer shows only the front and rear camera to reduce file size.</it>
       </p>
       <div id="rerun-viewer-container" style="position: relative; width: 100%; height: 600px; border: 1px solid #ddd; border-radius: 4px; overflow: hidden;">
       </div>
       <div class="has-text-centered mt-4">
-        <button class="button is-normal is-rounded is-dark" onclick="switchRecording('demo.rrd')">Demo</button>
+        <button class="button is-normal is-rounded is-dark" onclick="switchRecording('demo-yield-pedestrian.rrd')">Pedestrian</button>
+        <span class="mx-2"></span>
+        <button class="button is-normal is-rounded is-dark" onclick="switchRecording('demo-parking-exit-3520.rrd')">Parking Exit</button>
+        <span class="mx-2"></span>
+        <button class="button is-normal is-rounded is-dark" onclick="switchRecording('demo-overtake-cyclists-25439.rrd')">Overtake Cyclists</button>
+        <span class="mx-2"></span>
+        <button class="button is-normal is-rounded is-dark" onclick="switchRecording('demo-construction-1833.rrd')">Construction</button>
+        <span class="mx-2"></span>
+        <button class="button is-normal is-rounded is-dark" onclick="switchRecording('demo-emergency-3373.rrd')">Emergency Vehicle</button>
+        <span class="mx-2"></span>
+        <button class="button is-normal is-rounded is-dark" onclick="switchRecording('demo-invading-turn-3572.rrd')">Invading Vehicle</button>
+        <span class="mx-2"></span>
+        <button class="button is-normal is-rounded is-dark" onclick="switchRecording('demo-cut-in-18356.rrd')">Cut In</button>
         <span class="mx-2"></span>
       </div>
     </div>
@@ -405,8 +418,8 @@ BevAD achieves 72.7% success rate on the Bench2Drive benchmark and demonstrates 
     
     if (viewerContainer) {
       try {
-        // Construct the absolute URL for the RRD file
-        currentRrdUrl = new URL('./static/rrd/demo.rrd', window.location.href).href;
+        // Construct the absolute URL for the default RRD file
+        currentRrdUrl = new URL('./static/rrd/demo-yield-pedestrian.rrd', window.location.href).href;
         
         viewer = new WebViewer();
         await viewer.start(currentRrdUrl, viewerContainer, {
