@@ -418,18 +418,21 @@ BevAD achieves 72.7% success rate on the Bench2Drive benchmark and demonstrates 
     
     if (viewerContainer) {
       try {
+        // blueprint URL
+        const blueprintUrl = new URL('./static/rbl/demo-blueprint.rbl', window.location.href).href;
+
         // Construct the absolute URL for the default RRD file
         currentRrdUrl = new URL('./static/rrd/demo-yield-pedestrian.rrd', window.location.href).href;
         
         viewer = new WebViewer();
-        await viewer.start(currentRrdUrl, viewerContainer, {
+        await viewer.start([blueprintUrl, currentRrdUrl], viewerContainer, {
           width: '100%',
           height: '100%',
           allow_fullscreen: true,
           hide_welcome_screen: true,
         });
         viewer.override_panel_state("top", "hidden");
-        //viewer.override_panel_state("blueprint", "hidden");
+        viewer.override_panel_state("blueprint", "hidden");
         viewer.override_panel_state("selection", "hidden");
       } catch (error) {
         console.error('Failed to initialize Rerun viewer:', error);
