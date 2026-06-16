@@ -389,19 +389,50 @@ BevAD achieves 72.7% success rate on the Bench2Drive benchmark and demonstrates 
       <div id="rerun-viewer-container" style="position: relative; width: 100%; height: 600px; border: 1px solid #ddd; border-radius: 4px; overflow: hidden;">
       </div>
       <div class="has-text-centered mt-4">
-        <button class="button is-normal is-rounded is-dark" onclick="switchRecording('demo-yield-pedestrian.rrd')">Pedestrian</button>
+        <button class="button is-normal is-rounded is-dark" onclick="switchRecording('demo', 'demo-yield-pedestrian.rrd')">Pedestrian</button>
         <span class="mx-2"></span>
-        <button class="button is-normal is-rounded is-dark" onclick="switchRecording('demo-parking-exit-3520.rrd')">Parking Exit</button>
+        <button class="button is-normal is-rounded is-dark" onclick="switchRecording('demo', 'demo-parking-exit-3520.rrd')">Parking Exit</button>
         <span class="mx-2"></span>
-        <button class="button is-normal is-rounded is-dark" onclick="switchRecording('demo-overtake-cyclists-25439.rrd')">Overtake Cyclists</button>
+        <button class="button is-normal is-rounded is-dark" onclick="switchRecording('demo', 'demo-overtake-cyclists-25439.rrd')">Overtake Cyclists</button>
         <span class="mx-2"></span>
-        <button class="button is-normal is-rounded is-dark" onclick="switchRecording('demo-construction-1833.rrd')">Construction</button>
+        <button class="button is-normal is-rounded is-dark" onclick="switchRecording('demo', 'demo-construction-1833.rrd')">Construction</button>
         <span class="mx-2"></span>
-        <button class="button is-normal is-rounded is-dark" onclick="switchRecording('demo-emergency-3373.rrd')">Emergency Vehicle</button>
+        <button class="button is-normal is-rounded is-dark" onclick="switchRecording('demo', 'demo-emergency-3373.rrd')">Emergency Vehicle</button>
         <span class="mx-2"></span>
-        <button class="button is-normal is-rounded is-dark" onclick="switchRecording('demo-invading-turn-3572.rrd')">Invading Vehicle</button>
+        <button class="button is-normal is-rounded is-dark" onclick="switchRecording('demo', 'demo-invading-turn-3572.rrd')">Invading Vehicle</button>
         <span class="mx-2"></span>
-        <button class="button is-normal is-rounded is-dark" onclick="switchRecording('demo-cut-in-18356.rrd')">Cut In</button>
+        <button class="button is-normal is-rounded is-dark" onclick="switchRecording('demo', 'demo-cut-in-18356.rrd')">Cut In</button>
+        <span class="mx-2"></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Rerun Viewer -->
+<section class="hero is-small is-light">
+  <div class="hero-body">
+    <div class="container">
+      <h2 class="title is-3">Fail2Drive</h2>
+      <p class="has-text-centered mb-4">
+        BevAD achieves 74.9% harmonic mean on the generalization split of the Fail2Drive benchmark, outperforming related work.
+        Explore BevAD's generalization capabilities for selected scenes in the interactive viewer below.
+        We also highlight a hazardous situation and a collision with a wall, a common failure pattern of models purely trained with imitation learning in CARLA.
+        <it> This study was conducted by Karol Fedurko during his research internship in our lab.</it>
+      </p>
+      <div id="rerun-viewer-container-f2d" style="position: relative; width: 100%; height: 600px; border: 1px solid #ddd; border-radius: 4px; overflow: hidden;">
+      </div>
+      <div class="has-text-centered mt-4">
+        <button class="button is-normal is-rounded is-dark" onclick="switchRecording('f2d', 'f2d-badparking-1000.rrd')">Success: Bad Parking</button>
+        <span class="mx-2"></span>
+        <button class="button is-normal is-rounded is-dark" onclick="switchRecording('f2d', 'f2d-custom_obstacle-1021.rrd')">Success: Custom Obstacle</button>
+        <span class="mx-2"></span>
+        <button class="button is-normal is-rounded is-dark" onclick="switchRecording('f2d', 'f2d-elephant-1076.rrd')">Success: Elephant</button>
+        <span class="mx-2"></span>
+        <button class="button is-normal is-rounded is-dark" onclick="switchRecording('f2d', 'f2d-pedestrian_on_road-1086.rrd')">Success: Pedestrians</button>
+        <span class="mx-2"></span>
+        <button class="button is-normal is-rounded is-dark" onclick="switchRecording('f2d', 'f2d-fully_blocked-1032.rrd')">Hazardous: Fully Blocked</button>
+        <span class="mx-2"></span>
+        <button class="button is-normal is-rounded is-dark" onclick="switchRecording('f2d', 'f2d-wall-1095.rrd')">Crash: Wall</button>
         <span class="mx-2"></span>
       </div>
     </div>
@@ -411,47 +442,65 @@ BevAD achieves 72.7% success rate on the Bench2Drive benchmark and demonstrates 
 <script type="module">
   (async () => {
     const { WebViewer } = await import('./static/rerun-js/index.js');
-    
-    const viewerContainer = document.getElementById('rerun-viewer-container');
-    let viewer;
-    let currentRrdUrl;
     const blueprintUrl = new URL('./static/rbl/demo-blueprint.rbl', window.location.href).href;
 
-    if (viewerContainer) {
-      try {
-        // Construct the absolute URL for the default RRD file
-        currentRrdUrl = new URL('./static/rrd/demo-yield-pedestrian.rrd', window.location.href).href;
-        
-        viewer = new WebViewer();
-        await viewer.start([blueprintUrl, currentRrdUrl], viewerContainer, {
+    class RerunSection {
+      constructor(containerId, defaultRrd) {
+        this.containerId = containerId;
+        this.defaultRrd = defaultRrd;
+        this.viewer = null;
+        this.currentRrdUrl = null;
+      }
+
+      async init() {
+        const container = document.getElementById(this.containerId);
+        if (!container)
+          return;
+
+        this.viewer = new WebViewer();
+        this.currentRrdUrl = new URL(`./static/rrd/${this.defaultRrd}`, window.location.href).href;
+
+        await this.viewer.start([blueprintUrl, this.currentRrdUrl], container, {
           width: '100%',
           height: '100%',
           allow_fullscreen: true,
           hide_welcome_screen: true,
           theme: 'dark',
         });
-        viewer.override_panel_state("top", "hidden");
-        viewer.override_panel_state("blueprint", "hidden");
-        viewer.override_panel_state("selection", "hidden");
-      } catch (error) {
-        console.error('Failed to initialize Rerun viewer:', error);
-        viewerContainer.innerHTML = '<div style="padding: 20px; color: #d32f2f; text-align: center;">Failed to load Rerun viewer</div>';
+
+        this.viewer.override_panel_state('top', 'hidden');
+        this.viewer.override_panel_state('blueprint', 'hidden');
+        this.viewer.override_panel_state('selection', 'hidden');
+      }
+
+      async switchRecording(rrdFile) {
+        if (!this.viewer)
+          return;
+
+        try {
+          this.viewer.close(this.currentRrdUrl);
+          this.currentRrdUrl = new URL(`./static/rrd/${rrdFile}`, window.location.href).href;
+          this.viewer.open([blueprintUrl, this.currentRrdUrl]);
+        } catch (error) {
+          console.error(`Failed to switch recording for ${this.containerId}:`, error);
+        }
       }
     }
-    
-    window.switchRecording = async function(rrdFile) {
-      if (!viewer) return;
-      
-      try {
-        // Close current recording
-        viewer.close(currentRrdUrl);
-        
-        // Open new recording
-        currentRrdUrl = new URL('./static/rrd/' + rrdFile, window.location.href).href;
-        viewer.open([blueprintUrl, currentRrdUrl]);
-      } catch (error) {
-        console.error('Failed to switch recording:', error);
+
+    const rerunSections = {
+      demo: new RerunSection('rerun-viewer-container', 'demo-yield-pedestrian.rrd'),
+      f2d: new RerunSection('rerun-viewer-container-f2d', 'f2d-elephant-1076.rrd'),
+    };
+
+    await Promise.all(Object.values(rerunSections).map((section) => section.init()));
+
+    window.switchRecording = async function(sectionKey, rrdFile) {
+      const section = rerunSections[sectionKey];
+      if (!section) {
+        console.warn(`Unknown rerun section: ${sectionKey}`);
+        return;
       }
+      await section.switchRecording(rrdFile);
     };
   })();
 </script>
