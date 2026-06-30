@@ -1,0 +1,18 @@
+addict
+packaging
+Pillow
+matplotlib
+six
+scikit-image
+scipy
+scikit-learn
+networkx
+opencv-python-headless
+numpy
+# metric related
+einops
+torchmetrics
+# pytest related
+yapf==0.40.1
+torch==2.7.1
+torchvision

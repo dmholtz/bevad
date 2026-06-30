@@ -1,0 +1,18 @@
+[build-system]
+requires = [
+    "numpy<2.0.0",
+    "ninja",
+    "packaging",
+    "torch==2.7.1",
+    "setuptools",
+]
+
+[project]
+name = "mb-mmcv"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = "~=3.10.0"
+dependencies = [
+    "addict",
+    "yapf==0.40.1",
+]

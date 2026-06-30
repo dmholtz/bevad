@@ -1,0 +1,39 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "carla-srunner"
+dynamic = ["version"]
+requires-python = ">= 3.8, < 3.11"
+readme = "README.md"
+license = "MIT"
+dependencies = [
+    "carla==0.9.15",
+    "carla-agents-module>=0.9.15rc1",
+    "ephem",
+    "matplotlib",
+    "networkx",
+    "numpy",
+    "psutil",
+    "py-trees==0.8.3",
+    "Shapely",
+    "simple-watchdog-timer",
+    "six",
+    "tabulate",
+    "xmlschema",
+]
+
+[project.optional-dependencies]
+visu = [
+    "opencv-python-headless",
+]
+
+[[tool.hatch.envs.hatch-test.matrix]]
+python = ["3.8", "3.9", "3.10"]
+
+[tool.hatch.version]
+path = "srunner/__about__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = [ "srunner" ]

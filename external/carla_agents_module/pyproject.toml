@@ -1,0 +1,32 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "carla-agents-module"
+dynamic = ["version"]
+description = 'Exposes the `agents` module shipped with the carla simulator as a python package.'
+readme = "README.md"
+requires-python = ">=3.8, <3.11"
+license = "MIT"
+keywords = []
+dependencies = [
+  "carla==0.9.15",
+  "numpy",
+  "shapely",
+  "networkx",
+]
+
+[tool.ruff.lint]
+select = [
+    "E", # pycodestyle Error
+    "F", # Pyflakes
+    "I", # isort
+    "W", # pycodestyle Warning
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/agents"]
+
+[tool.hatch.version]
+path = "src/agents/__about__.py"

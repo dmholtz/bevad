@@ -1,0 +1,28 @@
+<routes><route id="14842" road_id="282" town="Town12">
+         <waypoints>
+            <position x="-174.3" y="4637.6" z="373.3" />
+            <position x="-174.3" y="4635.6" z="373.3" />
+            <position x="-174.3" y="4633.6" z="373.3" />
+            <position x="-191.0" y="4619.5" z="373.3" />
+            <position x="-193.0" y="4619.5" z="373.4" />
+            <position x="-195.0" y="4619.5" z="373.4" />
+            <position x="-197.0" y="4619.5" z="373.4" />
+            <position x="-199.0" y="4619.5" z="373.4" />
+            <position x="-201.0" y="4619.5" z="373.4" />
+            <position x="-203.0" y="4619.5" z="373.4" />
+            <position x="-205.0" y="4619.5" z="373.4" />
+            <position x="-207.0" y="4619.5" z="373.4" />
+            <position x="-209.0" y="4619.5" z="373.4" />
+            <position x="-211.0" y="4619.5" z="373.4" />
+            <position x="-213.0" y="4619.5" z="373.5" />
+            <position x="-215.0" y="4619.6" z="373.5" />
+            <position x="-217.0" y="4619.6" z="373.5" />
+            <position x="-219.0" y="4619.6" z="373.5" />
+         </waypoints>
+         <scenarios>
+            <scenario name="VanillaSignalizedTurnEncounterGreenLight_1" type="VanillaSignalizedTurnEncounterGreenLight">
+               <trigger_point x="-174.3" y="4630.6" yaw="269.9" z="373.3" />
+            </scenario>
+         </scenarios>
+         <weathers><weather cloudiness="80.0" dust_storm="0.0" fog_density="60.0" fog_distance="0.75" fog_falloff="0.10000000149011612" mie_scattering_scale="0.029999999329447746" precipitation="60.0" precipitation_deposits="60.0" rayleigh_scattering_scale="0.03310000151395798" scattering_intensity="1.0" sun_altitude_angle="-90.0" sun_azimuth_angle="-1.0" wetness="80.0" wind_intensity="60.0" route_percentage="0.0" name="MidRainyNight" /></weathers></route>
+      </routes>

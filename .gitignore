@@ -1,0 +1,35 @@
+# exclude all files, but allow traversal into directories
+*
+!*/
+
+# except for ...
+
+# python files
+!*.py
+
+# python project files
+!pyproject.toml
+!requirements.txt
+!ruff.toml
+!uv.lock
+
+# C++, CUDA files
+!*.cpp
+!*.cu
+!*.cuh
+!*.h
+!*.hpp
+
+# markdown files
+!*.md
+
+# license files
+!LICENSE
+!LICENSE.txt
+
+# git files
+!.gitignore
+!.gitkeep
+
+# project-specific exceptions
+!data/b2d-xml/*.xml

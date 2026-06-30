@@ -1,0 +1,80 @@
+line-length = 120
+target-version = "py38"
+
+[format]
+docstring-code-format = true
+
+[lint]
+select = [
+  "I", # isort
+  "FA", # future-annotations
+]
+ignore = [
+  # Ignore ruff-specific rules
+  "RUF",
+  # Allow verbose use of return
+  "RET",
+  # Ignore security checks; internal research codebase
+  "S",
+  # Ignore logging format
+  "G",
+  # Ignore pyupgrade hints
+  "UP022",
+  # Allow non-abstract empty methods in abstract base classes
+  "B027",
+  # Allow boolean positional values in function calls, like `dict.get(... True)`
+  "FBT003",
+  # Ignore checks for possible passwords
+  "S105",
+  "S106",
+  "S107",
+  # Ignore complexity
+  "C901",
+  "PLR0911",
+  "PLR0912",
+  "PLR0913",
+  "PLR0915",
+  # Ignore docstring missing in init since this can be done in class
+  "D107",
+  # Ignore missing from __future__ import annotations
+  "FA100",
+  # Ignore unused control variables in loops
+  "B007",
+  # ignore non-lowercase argument names
+  "N803",
+  # allow magic values
+  "PLR2004",
+  # Allow for-loops to transform lists (for readibility)
+  "PERF401",
+  # Allow boolean default positional arguments in functions
+  "FBT002",
+  # Allow print
+  "T201",
+  # Allow access of private member (necessary for CarlaDataProvider)
+  "SLF001",
+  # Do not force ternary operators'
+  "SIM108",
+  # Allow function variables to be upper case (e.g. for rigid transform notation)
+  "N806",
+  # Allow datetime without tz argument
+  "DTZ005",
+  # Allow overriding control variable in loop
+  "PLW2901",
+  # Allow long messages outside exception class
+  "TRY003",
+  # Allow logging.error
+  "TRY400",
+  # Allow string literal in exception
+  "EM101",
+  "EM102",
+]
+unfixable = [
+  # Don't touch unused imports
+  "F401",
+]
+
+[lint.pycodestyle]
+max-doc-length = 120
+
+[lint.pydocstyle]
+convention = "google"

@@ -1,0 +1,306 @@
+import math
+
+import torch
+import torch.nn as nn
+from mmcv.models import HEADS, build_head
+from mmcv.utils import ConfigDict
+
+from bevad.modules.util.bev_pe import (
+    SinusoidalPosEmb,
+    SinusoidalPositionalEncoding2D,
+)
+from bevad.modules.plan.diffusion_utils import (
+    normalize_trajectory,
+)
+
+
+@HEADS.register_module()
+class EntangledPointEstimatorPlanner(nn.Module):
+    def __init__(
+        self,
+        # representation
+        num_commands: int,
+        num_planning_steps: int,
+        # transformer
+        disentangled_decoder: ConfigDict,
+        # tokenizer
+        d_bev: int,
+        d_model: int,
+        bev_pooling: int | None,
+        bev_unshuffling: int | None,
+        bev_size: int,
+        cfg_p_uncond: float,
+        loss_weight: float,
+        **kwargs,
+    ):
+        super().__init__()
+
+        # config
+        self.num_planning_steps = num_planning_steps
+        self.d_model = d_model
+        self.loss_weight = loss_weight
+        self.cfg_p_uncond = cfg_p_uncond
+
+        # trajectory embeddings + transformer
+        self.traj_dim = 4
+        self.transformer = build_head(disentangled_decoder)
+
+        # scene tokenizer
+        self.scene_mask_kernel = 1
+        self.bev_pooling = bev_pooling
+        if bev_pooling is not None:
+            assert bev_pooling > 1
+            self.bev_pooling = nn.AvgPool2d(kernel_size=bev_pooling, stride=bev_pooling)
+            self.scene_mask_kernel *= bev_pooling
+        self.bev_unshuffling = bev_unshuffling
+        if bev_unshuffling is not None:
+            assert bev_unshuffling > 1
+            self.bev_unshuffling = nn.PixelUnshuffle(downscale_factor=bev_unshuffling)
+            self.scene_mask_kernel *= bev_unshuffling
+            self.unshuffling_projection = nn.Linear(
+                in_features=d_bev * bev_unshuffling**2, out_features=d_model
+            )
+
+        self.bev_pe = SinusoidalPositionalEncoding2D(
+            len_x=bev_size // self.scene_mask_kernel,
+            len_y=bev_size // self.scene_mask_kernel,
+            d_model=d_model,
+        )
+        self.query_pe = nn.Parameter(torch.randn(1, num_planning_steps, d_model))
+
+        # shared embeddings
+        self.command_embedding = nn.Embedding(
+            num_embeddings=num_commands,
+            embedding_dim=d_model,
+        )
+        self.ego_status_encoder = nn.Sequential(
+            SinusoidalPosEmb(d_model // 4),
+            nn.Linear(d_model // 4, d_model),
+            nn.LayerNorm(d_model),
+        )
+
+        # path / trajectory decoders
+        self.trajectory_decoder = nn.Sequential(
+            nn.Linear(in_features=d_model, out_features=d_model // 2),
+            nn.SiLU(),
+            nn.Linear(in_features=d_model // 2, out_features=self.traj_dim),
+        )
+
+    def forward(
+        self,
+        # training + inference
+        bev_features: torch.Tensor,
+        bev_mask: torch.Tensor | None,
+        current_speed: torch.Tensor,
+        command: torch.Tensor,
+        # training (GT)
+        planning_traj=None,
+        planning_mask=None,
+        # critical actor tracking
+        critical_actor_centers: torch.Tensor | None = None,
+        **kwargs,
+    ) -> dict[str, torch.Tensor]:
+        """Torch module forward pass."""
+
+        bs = bev_features.shape[0]
+        device = bev_features.device
+
+        x_padding_mask = (
+            torch.logical_not(planning_mask) if planning_mask is not None else None
+        )
+
+        # scene tokens
+        scene_tokens, scene_padding_mask = self._tokenize_scene(bev_features, bev_mask)
+
+        # conditioning
+        command_embed = self.command_embedding(command)
+        ego_status_embed = self.ego_status_encoder(current_speed.unsqueeze(-1))
+
+        # ego status dropout for classifier-free guidance
+        if self.cfg_p_uncond > 0.0:
+            drop_mask = torch.rand(bs, device=device) < self.cfg_p_uncond
+            ego_status_embed[drop_mask] = 0.0
+
+        cond = command_embed  # + ego_status_embed
+
+        # pass through DiT
+        attn_weights = []
+        out, intermediate_losses = self.transformer(
+            q=self.query_pe.repeat(bs, 1, 1),
+            kv=scene_tokens,
+            bev=bev_features,
+            cond=cond,
+            q_padding_mask=x_padding_mask,
+            kv_padding_mask=scene_padding_mask,
+            gt_path=planning_traj[..., :2] if planning_traj is not None else None,
+            gt_path_mask=planning_mask,
+            log_attention_weights=critical_actor_centers is not None,
+        )
+        xhat = out["q"]
+        if (attn_weight := out.get("attn_weights")) is not None:
+            attn_weights.append(attn_weight)
+
+        # decode
+        pred_traj = self.trajectory_decoder(xhat)
+
+        # [optional] compute losses
+        if planning_traj is not None:
+            losses = self._compute_loss(
+                pred_traj,
+                planning_traj,
+                planning_mask,
+            )
+            losses.update(intermediate_losses)
+        else:
+            losses = {}
+
+        if len(attn_weights) > 0:
+            attn_weights = torch.stack(attn_weights, dim=0)
+        else:
+            attn_weights = None
+
+        if attn_weights is not None and critical_actor_centers is not None:
+            traj_attn = attn_weights[:, :, :, :]
+            critical_attn_traj = self._get_critical_actor_attn(
+                traj_attn, critical_actor_centers
+            )
+        else:
+            critical_attn_traj = None
+
+        results = dict(
+            pred_bev_waypoints=None,
+            pred_trajectory=pred_traj[..., :2],
+            planning_mask=planning_mask,
+            attn_weights=attn_weights,
+            critical_attn_traj=critical_attn_traj,
+        )
+
+        # [optional]: compute metrics
+        if planning_traj is not None:
+            traj_l1 = self._compute_waypoint_l1(
+                pred_traj[..., :2], planning_traj[..., :2], planning_mask
+            )
+            traj_l1_1s = self._compute_waypoint_l1(
+                pred_traj[..., :2],
+                planning_traj[..., :2],
+                planning_mask,
+                maxlen=5,
+            )
+            traj_l1_2s = self._compute_waypoint_l1(
+                pred_traj[..., :2],
+                planning_traj[..., :2],
+                planning_mask,
+                maxlen=10,
+            )
+            losses.update(
+                dict(
+                    l1_traj=traj_l1,
+                    l1_traj_1s=traj_l1_1s,
+                    l1_traj_2s=traj_l1_2s,
+                )
+            )
+
+        return results, losses
+
+    def _tokenize_scene(self, bev: torch.Tensor, bev_mask: torch.Tensor | None):
+        bs, hw, c = bev.shape
+
+        # shape as image
+        h = w = int(math.sqrt(hw))
+        spatial_bev = bev.permute(0, 2, 1).reshape(bs, c, h, w)
+        spatial_mask = bev_mask.view(bs, h, w) if bev_mask is not None else None
+
+        # pool
+        if self.bev_pooling is not None:
+            spatial_bev = self.bev_pooling(spatial_bev)
+
+        # unshuffle
+        if self.bev_unshuffling is not None:
+            spatial_bev = self.bev_unshuffling(spatial_bev)
+
+        # adapt mask
+        if spatial_mask is not None:
+            spatial_mask = (
+                nn.functional.avg_pool2d(
+                    spatial_mask.unsqueeze(1).float(),
+                    kernel_size=self.scene_mask_kernel,
+                    stride=self.scene_mask_kernel,
+                ).squeeze(1)
+                > 0.5
+            )
+
+        # shape as sequence
+        scene_tokens = spatial_bev.flatten(2).permute(0, 2, 1)
+        scene_key_padding_mask = (
+            spatial_mask.flatten(1) if spatial_mask is not None else None
+        )
+
+        # project if unshuffled
+        if self.bev_unshuffling is not None:
+            scene_tokens = self.unshuffling_projection(scene_tokens)
+
+        # add PE
+        scene_pe = self.bev_pe(scene_tokens).to(bev.dtype)
+        scene_tokens = scene_tokens + scene_pe
+
+        return scene_tokens, scene_key_padding_mask
+
+    def _compute_loss(self, input_traj, target_traj, mask_traj):
+        input_traj = normalize_trajectory(input_traj)
+        target_traj = normalize_trajectory(target_traj)
+        loss_traj = (
+            nn.functional.smooth_l1_loss(
+                input_traj[mask_traj], target_traj[mask_traj], reduction="none"
+            )
+            .sum(-1)
+            .mean()
+        )
+        return {
+            "loss_traj": loss_traj * self.loss_weight,
+        }
+
+    def _compute_waypoint_l1(self, input, target, mask, maxlen: int = None):
+        delta = torch.sqrt(torch.sum(torch.square(input - target), dim=-1))
+        if maxlen is not None:
+            mask = mask.clone()
+            mask[..., maxlen:] = False
+        l1 = delta[mask].mean()
+        return l1
+
+    def _get_critical_actor_attn(
+        self, attn_weights: torch.Tensor, critical_actor_centers: torch.Tensor
+    ):
+        """Compute attention weights for critical actors.
+
+        Args:
+            attn_weights (torch.Tensor): Shape: num_denoising_steps x num_layers x B x num_queries x spatial_hw
+            critical_actor_centers (torch.Tensor): Shape: B x N x 2
+            critical_actor_mask (torch.Tensor): Shape: B x N
+        """
+        bs = attn_weights.shape[2]
+        hw = attn_weights.shape[-1]
+        h = w = int(math.sqrt(hw))
+
+        # aggregate attention along query dimension
+        attn_weights = attn_weights.mean(
+            3
+        )  # num_denoising_steps x num_layers x B x spatial_hw
+
+        # transform attention weights into 2D spatial map
+        attn_map = attn_weights.permute(2, 0, 1, 3).flatten(1, 2).reshape(bs, -1, h, w)
+
+        # compute sampling points from critical actor centers
+        sampling_points = torch.zeros_like(critical_actor_centers)
+        sampling_points[..., 0] = (
+            -critical_actor_centers[..., 1] / 40
+        )  # TODO: remove hardcoded 40
+        sampling_points[..., 1] = critical_actor_centers[..., 0] / 40
+        sampling_points = sampling_points[:, :, None, :]  # B x N x 1 x 2
+
+        # sample attention weights at critical actor locations
+        critical_attn = (
+            nn.functional.grid_sample(attn_map, sampling_points)
+            .squeeze(-1)
+            .permute(0, 2, 1)
+        )  # B x N x (num_denoising_steps * num_layers)
+        return critical_attn

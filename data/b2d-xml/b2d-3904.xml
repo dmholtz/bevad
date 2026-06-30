@@ -1,0 +1,29 @@
+<routes><route id="3904" road_id="390" town="Town13">
+         <waypoints>
+            <position x="2616.1" y="5529.5" z="158.4" />
+            <position x="2618.1" y="5529.5" z="158.4" />
+            <position x="2620.1" y="5529.6" z="158.5" />
+            <position x="2635.7" y="5515.2" z="158.9" />
+            <position x="2635.7" y="5513.2" z="159.0" />
+            <position x="2635.7" y="5511.2" z="159.0" />
+            <position x="2635.7" y="5509.2" z="159.0" />
+            <position x="2635.7" y="5507.2" z="159.0" />
+            <position x="2635.7" y="5505.2" z="159.1" />
+            <position x="2635.7" y="5503.2" z="159.1" />
+            <position x="2635.7" y="5501.2" z="159.1" />
+            <position x="2635.7" y="5499.2" z="159.1" />
+            <position x="2635.8" y="5497.2" z="159.2" />
+            <position x="2635.8" y="5495.2" z="159.2" />
+            <position x="2635.8" y="5493.2" z="159.2" />
+            <position x="2635.8" y="5491.2" z="159.2" />
+            <position x="2635.8" y="5489.2" z="159.3" />
+            <position x="2635.8" y="5487.2" z="159.3" />
+            <position x="2635.8" y="5485.2" z="159.3" />
+         </waypoints>
+         <scenarios>
+            <scenario name="VanillaNonSignalizedTurnEncounterStopsign_1" type="VanillaNonSignalizedTurnEncounterStopsign">
+               <trigger_point x="2623.1" y="5529.6" yaw="0.7" z="158.6" />
+            </scenario>
+         </scenarios>
+         <weathers><weather cloudiness="5.0" dust_storm="0.0" fog_density="2.0" fog_distance="0.75" fog_falloff="0.10000000149011612" mie_scattering_scale="0.029999999329447746" precipitation="0.0" precipitation_deposits="0.0" rayleigh_scattering_scale="0.03310000151395798" scattering_intensity="1.0" sun_altitude_angle="15.0" sun_azimuth_angle="-1.0" wetness="0.0" wind_intensity="10.0" route_percentage="0.0" name="ClearSunset" /></weathers></route>
+      </routes>

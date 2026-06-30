@@ -1,6 +1,74 @@
-# bevad
+# BevAD
 
-This repository will contain the code of the paper "What Matters for Scalable and Robust Learning in End-to-End Driving Planners?".
+Official code release for **[What Matters for Scalable and Robust Learning in End-to-End Driving Planners?](https://dmholtz.github.io/bevad/)** — accepted at **CVPR Findings 2026**.
+
+*David Holtz, Niklas Hanselmann, Simon Doll, Marius Cordts and Bernt Schiele*<br>
+*Mercedes-Benz AG &amp; Max-Plack-Institute for Informatics, SIC*
+
+[![Paper](https://img.shields.io/badge/Paper-arXiv%3A2603.15185-b31b1b)](https://arxiv.org/abs/2603.15185)
+[![Project Page](https://img.shields.io/badge/Project-Page-green)](https://dmholtz.github.io/bevad/)
+[![Hugging Face](https://img.shields.io/badge/HuggingFace-%F0%9F%92%AC-ff6b6b)](https://huggingface.co/dmhol/BevAD)
+
+---
+
+## 📰 News
+
+- **2026-06** — Initial code and checkpoint release.
+- **2026-06** — Publish Fail2Drive results. 
+- **2026-03** — Paper release on arXiv.
+
+## 🌐 Overview
+
+```
+bevad-workspace/
+├── bevad/                  # Main codebase
+├── bevad-sim/              # Connector between bevad and CARLA
+├── checkpoints/            # Model checkpoints (download separately)
+├── data/b2d-xml/           # Bench2Drive route definitions (XML)
+├── external/               # Third-party dependencies (CARLA, mmcv)
+├── recordings/             # Simulation episode stored here (created by inference.py)
+└── inference.py            # Example script for closed-loop inference
+```
+
+## ⚙️ Installation
+
+**Requirements:**
+
+- Ubuntu 22.04 (recommended)
+- Python 3.10
+- CUDA 12 with a GPU of compute capability ≥ 7.0
+- [CARLA 0.9.15](https://github.com/carla-simulator/carla/releases/tag/0.9.15) with additional large maps installed
+- [uv](https://docs.astral.sh/uv/) package manager (recommended)
+
+**Setup:**
+
+```bash
+# Set the number of parallel compilation jobs (adjust to your CPU core count)
+export MAX_JOBS=24
+# Specify target CUDA architectures
+export TORCH_CUDA_ARCH_LIST="7.0+PTX 7.5 8.0+PTX"
+# Install all dependencies
+uv sync -p 3.10
+```
+
+> **Note:** Installation takes 5–15 minutes depending on hardware. The majority of time is spent compiling mmcv from source — setting `MAX_JOBS` to match your available CPU cores speeds this up significantly.
+
+## 🚗 Closed-Loop Simulation
+
+1. Download the BevAD checkpoint from **[Hugging Face](https://huggingface.co/dmhol/BevAD/blob/main/model.ckpt)** and place it at `checkpoints/bevad-m.ckpt`.
+2. Run closed-loop simulation on a Bench2Drive route:
+
+```bash
+python inference.py \
+    --checkpoint checkpoints/bevad-m.ckpt \
+    --config bevad/bevad/configs/cvpr/scaling_diffusion.py \
+    --route data/b2d-xml/b2d-24224.xml \
+    --output-dir recordings
+```
+
+All arguments are optional and default to the values shown above. To run a different route, replace the `--route` path with any XML file from `data/b2d-xml/`.
+
+
 
 ## 🐘 Fail2Drive
 
@@ -30,3 +98,7 @@ These results were conducted by [Karol Fedurko](https://github.com/kafe-it) duri
     pages     = {931-941}
 }
 ```
+
+## 📄 License
+
+This project is licensed under the [MIT License](LICENSE). Note that it includes third-party components in the `external/` directory that are subject to their own license terms. See the [LICENSE](LICENSE) file for details.

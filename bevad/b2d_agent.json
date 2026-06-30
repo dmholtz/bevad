@@ -1,0 +1,132 @@
+{
+  "ego_body": {
+    "model": "vehicle.lincoln.mkz_2020"
+  },
+  "sensors": [
+    {
+      "type": "sensor.camera.rgb",
+      "x": 0.6,
+      "y": 0.0,
+      "z": 1.60,
+      "roll": 0.0,
+      "pitch": 5.0,
+      "yaw": 0.0,
+      "width": 1600,
+      "height": 900,
+      "fov": 90,
+      "fps": 0,
+      "id": "CAM_FRONT",
+      "container_name": "rgb"
+    },
+    {
+      "type": "sensor.camera.rgb",
+      "x": 0.27,
+      "y": -0.55,
+      "z": 1.60,
+      "roll": 0.0,
+      "pitch": 0.0,
+      "yaw": -55.0,
+      "width": 1600,
+      "height": 900,
+      "fov": 90,
+      "fps": 0,
+      "id": "CAM_FRONT_LEFT",
+      "container_name": "rgb"
+    },
+    {
+      "type": "sensor.camera.rgb",
+      "x": 0.27,
+      "y": 0.55,
+      "z": 1.60,
+      "roll": 0.0,
+      "pitch": 0.0,
+      "yaw": 55.0,
+      "width": 1600,
+      "height": 900,
+      "fov": 90,
+      "fps": 0,
+      "id": "CAM_FRONT_RIGHT",
+      "container_name": "rgb"
+    },
+    {
+      "type": "sensor.camera.rgb",
+      "x": -2.0,
+      "y": 0.0,
+      "z": 1.60,
+      "roll": 0.0,
+      "pitch": -5.0,
+      "yaw": 180.0,
+      "width": 1600,
+      "height": 900,
+      "fov": 90,
+      "fps": 0,
+      "id": "CAM_BACK",
+      "container_name": "rgb"
+    },
+    {
+      "type": "sensor.camera.rgb",
+      "x": -0.32,
+      "y": -0.55,
+      "z": 1.60,
+      "roll": 0.0,
+      "pitch": -5.0,
+      "yaw": -110.0,
+      "width": 1600,
+      "height": 900,
+      "fov": 90,
+      "fps": 0,
+      "id": "CAM_BACK_LEFT",
+      "container_name": "rgb"
+    },
+    {
+      "type": "sensor.camera.rgb",
+      "x": -0.32,
+      "y": 0.55,
+      "z": 1.60,
+      "roll": 0.0,
+      "pitch": -5.0,
+      "yaw": 110.0,
+      "width": 1600,
+      "height": 900,
+      "fov": 90,
+      "fps": 0,
+      "id": "CAM_BACK_RIGHT",
+      "container_name": "rgb"
+    },
+    {
+      "type": "sensor.camera.rgb",
+      "x": 0,
+      "y": 0,
+      "z": 75.0,
+      "roll": 0.0,
+      "pitch": -90.0,
+      "yaw": 0,
+      "width": 1000,
+      "height": 1000,
+      "fov": 68.64,
+      "fps": 0,
+      "id": "BEV_CAM",
+      "container_name": "bev"
+    },
+    {
+      "type": "imu",
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "roll": 0,
+      "pitch": 0,
+      "yaw": 0,
+      "id": "IMU"
+    },
+    {
+      "type": "gnss",
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "roll": 0,
+      "pitch": 0,
+      "yaw": 0,
+      "id": "GNSS"
+    }
+  ]
+}

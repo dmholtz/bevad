@@ -1,0 +1,21 @@
+# general
+# line-length = 100
+target-version = "py310"
+
+extend-exclude = [
+    "external",
+    "bevad",
+]
+
+[lint]
+# rules according to: https://docs.astral.sh/ruff/rules/
+select = [
+    "I",
+]
+unfixable = [
+  # Don't touch unused imports
+  "F401",
+]
+
+[lint.pydocstyle]
+convention = "google"

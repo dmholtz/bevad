@@ -1,0 +1,28 @@
+[project]
+name = "bevad-workspace"
+version = "0.1.0"
+requires-python = ">=3.10"
+dependencies = [
+    "bevad[carla]",
+    "bevad-sim",
+]
+
+[tool.uv.workspace]
+members = [
+    "external/carla_agents_module",
+    "external/carla_srunner",
+    "external/mb-mmcv",
+    "bevad",
+    "bevad-sim",
+]
+
+[tool.uv.sources]
+bevad = { workspace = true }
+bevad-sim = { workspace = true }
+carla-agents-module = { workspace = true }
+carla-srunner = { workspace = true }
+mb-mmcv = { workspace = true }
+
+[[tool.uv.index]]
+url = "https://pypi.org/simple"
+default = true

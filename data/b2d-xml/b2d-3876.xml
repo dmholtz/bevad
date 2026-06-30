@@ -1,0 +1,28 @@
+<routes><route id="3876" road_id="1076" town="Town13">
+         <waypoints>
+            <position x="2511.7" y="1915.6" z="169.6" />
+            <position x="2509.7" y="1915.6" z="169.6" />
+            <position x="2507.7" y="1915.5" z="169.5" />
+            <position x="2492.3" y="1903.8" z="169.0" />
+            <position x="2492.3" y="1901.8" z="169.0" />
+            <position x="2492.3" y="1899.8" z="169.0" />
+            <position x="2492.3" y="1897.8" z="168.9" />
+            <position x="2492.3" y="1895.8" z="168.9" />
+            <position x="2492.3" y="1893.8" z="168.9" />
+            <position x="2492.3" y="1891.8" z="168.9" />
+            <position x="2492.3" y="1889.8" z="168.9" />
+            <position x="2492.3" y="1887.8" z="168.8" />
+            <position x="2492.3" y="1885.8" z="168.8" />
+            <position x="2492.3" y="1883.8" z="168.8" />
+            <position x="2492.3" y="1881.8" z="168.8" />
+            <position x="2492.3" y="1879.8" z="168.7" />
+            <position x="2492.3" y="1877.8" z="168.7" />
+            <position x="2492.3" y="1875.8" z="168.7" />
+         </waypoints>
+         <scenarios>
+            <scenario name="VanillaSignalizedTurnEncounterRedLight_1" type="VanillaSignalizedTurnEncounterRedLight">
+               <trigger_point x="2504.7" y="1915.5" yaw="180.5" z="169.5" />
+            </scenario>
+         </scenarios>
+         <weathers><weather cloudiness="5.0" dust_storm="0.0" fog_density="2.0" fog_distance="0.75" fog_falloff="0.10000000149011612" mie_scattering_scale="0.029999999329447746" precipitation="0.0" precipitation_deposits="50.0" rayleigh_scattering_scale="0.03310000151395798" scattering_intensity="1.0" sun_altitude_angle="15.0" sun_azimuth_angle="-1.0" wetness="0.0" wind_intensity="10.0" route_percentage="0.0" name="WetSunset" /></weathers></route>
+      </routes>

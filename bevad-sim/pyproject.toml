@@ -1,0 +1,88 @@
+[project]
+name = "bevad-sim"
+dynamic = ["version"]
+description = 'This package provides the connection between bevad and the carla simulator for end-to-end closed-loop evaluation.'
+readme = "README.md"
+requires-python = ">=3.8, <3.14"
+license = "MIT"
+keywords = []
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python :: Implementation :: PyPy",
+]
+dependencies = [
+  "gymnasium",
+  "lxml",
+  "matplotlib",
+  "pyqt5",
+  "numpy<2.0", # >=2.0 breaks stored e2e-core episode data
+  "omegaconf",
+  "opencv-python-headless",
+  "requests",
+  "pygame",
+  "shapely",
+  "scipy",
+  "torch",
+  "zstandard",
+  "click",
+  "tqdm",
+  "pyyaml",
+]
+
+[dependency-groups]
+dev = [
+  "ruff==0.9.6",
+  "pre-commit",
+  "mypy",
+  "pytest",
+  "poethepoet",
+  "types-shapely>=2.0.0",
+  "nbmake>=1.5.5",
+  "wandb",
+]
+
+[project.optional-dependencies]
+# CARLA dependency group restricts the python version to < 3.11
+carla = [
+  "carla>=0.9.15; python_version < '3.11'",
+  "carla-agents-module>=0.9.15rc1; python_version < '3.11'",
+  "carla-srunner==0.5.0; python_version < '3.11'",
+  "dictor>=0.1.12; python_version < '3.11'",
+  "rdp>=0.8; python_version < '3.11'",
+  "ujson>=5.10.0; python_version < '3.11'",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+path = "src/bevad_sim/__about__.py"
+
+[tool.uv]
+override-dependencies = [
+  "numpy<2.0",
+]
+
+[[tool.uv.index]]
+name = "pypi"
+url = "https://pypi.org/simple"
+default = true
+
+[tool.pytest.ini_options]
+pythonpath = [
+  "src",
+  ".",
+]
+markers = [
+  "manual: marks tests to run only when explicitly requested (deselect with '-m \"not manual\"')",
+]
+addopts = "-m 'not manual'" # Exclude manual tests by default
