@@ -349,6 +349,8 @@ class WorldState(BaseEntity):
                 res.track_id[0, t, idx] = track_id
                 if res.category is not None and tws.category is not None:
                     res.category[0, t, idx] = tws.category[0, 0, j]
+                if res.attribute is not None and tws.attribute is not None:
+                    res.attribute[0, t, idx] = tws.attribute[0, 0, j]
         res.ego_id = world_states[0].ego_id
         res.attribute_map = world_states[0].attribute_map
         res.category_map = world_states[0].category_map
@@ -704,8 +706,12 @@ class WorldStateUtils:
         res.is_valid = interpolate_array_time(src_timestamps, ws.is_valid, target_timestamps, 1).astype(np.uint8)
 
         res.category = interpolate_array_time(src_timestamps, ws.category, target_timestamps, 1).astype(np.uint16)
+        res.category_map = ws.category_map
+        res.attribute = interpolate_array_time(src_timestamps, ws.attribute, target_timestamps, 1).astype(np.uint16)
+        res.attribute_map = ws.attribute_map
         res.track_id = interpolate_array_time(src_timestamps, ws.track_id, target_timestamps, 1).astype(np.uint16)
-
+        res.is_visible = interpolate_array_time(src_timestamps, ws.is_visible, target_timestamps, 1).astype(bool)
+        
         tx = interpolate_array_time(src_timestamps, x, target_timestamps, 1)
         ty = interpolate_array_time(src_timestamps, y, target_timestamps, 1)
         tz = interpolate_array_time(src_timestamps, z, target_timestamps, 1)
